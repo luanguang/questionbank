@@ -15,10 +15,20 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::group(['namespace' => 'Admin', 'prefix' => 'user', 'middleware' => 'auth'], function () {
-    Route::get('/', 'UserController@index');
-    Route::get('/{user_id}', 'UserController@show');
-    Route::delete('/{user_id}', 'UserController@destroy');
+Route::group(['namespace' => 'Admin', 'middleware' => 'auth'], function () {
+    Route::group(['prefix' => 'user'], function () {
+        Route::get('/', 'UserController@index');
+        Route::get('/{user_id}', 'UserController@show');
+        Route::delete('/{user_id}', 'UserController@destroy');
+    });
+
+    Route::group(['prefix' => 'category'], function () {
+        Route::get('/', 'CategoryController@index');
+        Route::get('/{category_id}', 'CategoryController@show');
+        Route::put('/{category_id}', 'CategoryController@update');
+        Route::post('/', 'CategoryController@store');
+        Route::delete('/{category_id}', 'CategoryController@destroy');
+    });
 });
 
 Route::group(['namespace' => 'Web'], function () {
@@ -37,10 +47,6 @@ Route::group(['namespace' => 'Web'], function () {
 
     Route::group(['prefix' => 'category'], function () {
         Route::get('/', 'CategoryController@index');
-        Route::get('/{category_id}', 'CategoryController@show');
-        Route::put('/{category_id}', 'CategoryController@update');
-        Route::post('/', 'CategoryController@store');
-        Route::delete('/{category_id}', 'CategoryController@destroy');
     });
 
     Route::get('history', 'HistoryController@index');

@@ -1,85 +1,33 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Web;
 
-use App\History;
+use App\Models\History;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class HistoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function index(Request $request)
     {
-        //
-    }
+        $this->validate($request, [
+            'category_id'  =>   'integer|min:0',
+            'content'      =>   'string'
+        ]);
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+        $histories = History::where('user_id', Auth::user()->id);
+        $search = array_filter($request->only('category_id', 'content'), function ($var) {
+            return !empty($var);
+        });
+        foreach ($search as $key => $value) {
+            if (in_array($key, ['category_id'])) {
+                $histories = $histories->where($key, $value);
+            } elseif (in_array($key, ['content'])) {
+                $histories = $histories->where($key, 'LIKE', '%'.$value.'%');
+            }
+        }
+        $histories = $histories->orderBy('id', 'DESC')->paginate(20);
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\History  $history
-     * @return \Illuminate\Http\Response
-     */
-    public function show(History $history)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\History  $history
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(History $history)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\History  $history
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, History $history)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\History  $history
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(History $history)
-    {
-        //
+        return $histories;
     }
 }

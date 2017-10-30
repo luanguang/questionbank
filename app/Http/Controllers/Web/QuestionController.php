@@ -1,85 +1,36 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Web;
 
-use App\Question;
+use App\Models\Question;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class QuestionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function index(Request $request)
     {
-        //
-    }
+        $this->validate($request, [
+            'category_id'   =>  'integer|min:0',
+            'content'       =>  'string',
+            'is_pic'        =>  'boolean',
+            'user_id'       =>  'integer|min:0'
+        ]);
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+        $search = array_filter($request->only('content', 'category_id', 'is_pic', 'user_id'), function ($var) {
+            return !empty($var);
+        });
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        $questions = new Question;
+        foreach ($search as $key => $value) {
+            if (in_array($key, ['category_id', 'is_pic', 'user_id'])) {
+                $questions = $questions->where($key, $value);
+            } elseif (in_array($key, ['content'])) {
+                $questions = $questions->where($key, 'LIKE', '%' . $value . '%');
+            }
+        }
+        $questions = $questions->orderBy('id', 'DESC')->paginate(30);
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Question  $question
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Question $question)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Question  $question
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Question $question)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Question  $question
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Question $question)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Question  $question
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Question $question)
-    {
-        //
+        return $questions->toJson();
     }
 }

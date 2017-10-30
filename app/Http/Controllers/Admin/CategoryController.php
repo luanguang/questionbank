@@ -8,79 +8,56 @@ use App\Http\Controllers\Controller;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        $categories = Category::all();
+
+        return $categories;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function show($category_id)
     {
-        //
+        $category = Category::findOrFail($category_id);
+
+        return $category;
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'subject'   =>  'required|string',
+            'content'   =>  'required|string'
+        ]);
+
+        $category = Category::create([
+            'subject'   => $request->input('subject'),
+            'content'   => $request->input('content'),
+        ]);
+
+        return $category;
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Category  $category
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Category $category)
+    public function update(Request $request, $category_id)
     {
-        //
+        $this->validate($request, [
+            'subject'   =>  'string',
+            'content'   =>  'content'
+        ]);
+
+        $category = Category::findOrFail($category_id);
+        $category->update([
+            'subject'   =>  $request->input('subject'),
+            'content'   =>  $request->input('content')
+        ]);
+
+        return $category;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Category  $category
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Category $category)
+    public function destroy($category_id)
     {
-        //
-    }
+        $category = Category::findOrFail($category_id);
+        $category->delete();
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Category  $category
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Category $category)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Category  $category
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Category $category)
-    {
-        //
+        return;
     }
 }

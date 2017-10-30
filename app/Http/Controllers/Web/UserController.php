@@ -1,25 +1,32 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Web;
 
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    public function index()
+    public function show()
     {
-        //
+        $user = Auth::user();
+
+        return $user;
     }
 
-    public function show(User $user)
+    public function update(Request $request)
     {
-        //
-    }
+        $this->validate($request, [
+            'name'      =>  'string',
+        ]);
 
-    public function destroy(User $user)
-    {
-        //
+        $user = Auth::user();
+        $user->update($request, [
+            'name'  =>  $request->input('name')
+        ]);
+
+        return $user;
     }
 }

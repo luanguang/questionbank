@@ -16,11 +16,11 @@ class HistoryController extends Controller
         ]);
 
         $histories = History::where('user_id', Auth::user()->id);
-        $search = array_filter($request->only('category_id', 'content'), function ($var) {
+        $search = array_filter($request->only('category_id', 'content', 'question_id'), function ($var) {
             return !empty($var);
         });
         foreach ($search as $key => $value) {
-            if (in_array($key, ['category_id'])) {
+            if (in_array($key, ['category_id', 'question_id'])) {
                 $histories = $histories->where($key, $value);
             } elseif (in_array($key, ['content'])) {
                 $histories = $histories->where($key, 'LIKE', '%'.$value.'%');
@@ -28,6 +28,6 @@ class HistoryController extends Controller
         }
         $histories = $histories->orderBy('id', 'DESC')->paginate(20);
 
-        return $histories;
+        return $histories->tojson();
     }
 }

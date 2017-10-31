@@ -7,4 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class Question extends Model
 {
     protected $guarded = [];
+
+    public function user()
+    {
+        return $this->belongsTo('App\Models\User', 'user_id');
+    }
+
+    public function answers()
+    {
+        return $this->hasMany('App\Models\Answer', 'question_id');
+    }
 }

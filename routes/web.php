@@ -55,10 +55,10 @@ Route::group(['namespace' => 'Web'], function () {
         Route::delete('/{question_id}', 'QuestionController@destroy');
 
         //Answer
-        Route::get('/{question_id}', 'AnswerController@show');
-        Route::put('/{question_id}', 'AnswerController@update');
-        Route::post('/', 'AnswerController@store');
-        Route::delete('/{question_id}', 'AnswerController@destroy');
+        Route::get('/{question_id}/answer', 'AnswerController@show');
+        Route::put('/{question_id}/answer/{answer_id}', 'AnswerController@update');
+        Route::post('/{question_id}/answer', 'AnswerController@store');
+        Route::delete('/{question_id}/answer/{answer_id}', 'AnswerController@destroy');
     });
 
     Route::group(['prefix' => 'category'], function () {

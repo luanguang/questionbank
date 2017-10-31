@@ -33,4 +33,26 @@ class QuestionController extends Controller
 
         return $questions->toJson();
     }
+
+    public function show($question_id)
+    {
+        $question = Question::findOrFail($question_id);
+
+        return $question->tojson();
+    }
+
+    public function store(Request $request)
+    {
+        $this->validate($request, [
+            'content'           =>  'required|string',
+            'is_pic_question'   =>  'required|boolean',
+            'text_choice'       =>  'required_if:is_pic_question,0|string',
+            'pic'               =>  'required_if:is_pic_question,1|image',
+            'detail'            =>  'string',
+            'is_plural'         =>  'required|boolean',
+            'is_right_choice'   =>  'boolean'
+        ]);
+
+
+    }
 }

@@ -13,7 +13,7 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
-        return $user;
+        return $user->toJson();
     }
 
     public function update(Request $request)
@@ -27,6 +27,6 @@ class UserController extends Controller
             'name'  =>  $request->input('name')
         ]);
 
-        return $user;
+        return $user->toJson();
     }
 }

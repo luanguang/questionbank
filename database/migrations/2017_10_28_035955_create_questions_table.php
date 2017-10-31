@@ -17,12 +17,9 @@ class CreateQuestionsTable extends Migration
             $table->increments('id');
             $table->string('content');
             $table->boolean('is_pic_question')->default(0);
-            $table->string('text_choice')->nullable();
-            $table->string('pic_choice')->nullable();
-            $table->string('right_choice');
-            $table->string('detail')->nullable();
             $table->boolean('is_plural')->default(0);
-            $table->integer('choice_count');
+            $table->integer('choice_num');
+            $table->integer('test_num')->default(0);
             $table->integer('category_id');
             $table->integer('user_id');
             $table->timestamps();

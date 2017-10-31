@@ -29,6 +29,16 @@ Route::group(['namespace' => 'Admin', 'middleware' => 'auth'], function () {
         Route::post('/', 'CategoryController@store');
         Route::delete('/{category_id}', 'CategoryController@destroy');
     });
+
+    Route::group(['prefix'  =>  'question'], function () {
+        Route::get('/', 'QuestionController@index');
+        Route::post('/', 'QuestionController@store');
+        Route::delete('/{question_id}', 'QuestionController@destroy');
+
+        //Answer
+        Route::post('/', 'AnswerController@store');
+        Route::delete('/{question_id}', 'AnswerController@destroy');
+    });
 });
 
 Route::group(['namespace' => 'Web'], function () {
@@ -43,6 +53,12 @@ Route::group(['namespace' => 'Web'], function () {
         Route::put('/{question_id}', 'QuestionController@update');
         Route::post('/', 'QuestionController@store');
         Route::delete('/{question_id}', 'QuestionController@destroy');
+
+        //Answer
+        Route::get('/{question_id}', 'AnswerController@show');
+        Route::put('/{question_id}', 'AnswerController@update');
+        Route::post('/', 'AnswerController@store');
+        Route::delete('/{question_id}', 'AnswerController@destroy');
     });
 
     Route::group(['prefix' => 'category'], function () {

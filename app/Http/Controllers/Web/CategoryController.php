@@ -11,6 +11,6 @@ class CategoryController extends Controller
     {
         $categories = Category::orderBy('id', 'DESC')->paginate(10);
 
-        return $categories;
+        return $categories->tojson();
     }
 }

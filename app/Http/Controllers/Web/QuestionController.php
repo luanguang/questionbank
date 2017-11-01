@@ -13,14 +13,13 @@ class QuestionController extends Controller
     {
         $this->validate($request, [
             'category_id'   =>  'integer|min:0',
-            'content'       =>  'string',
+            'title'         =>  'string',
             'is_pic'        =>  'boolean',
             'user_id'       =>  'integer|min:0',
             'choice_num'    =>  'integer|min:0',
-            'is_plural'     =>  'boolean'
         ]);
 
-        $search = array_filter($request->only('content', 'category_id', 'is_pic', 'user_id', 'choice_num', 'is_plural'), function ($var) {
+        $search = array_filter($request->only('title', 'category_id', 'is_pic', 'user_id', 'choice_num'), function ($var) {
             return !empty($var);
         });
 
@@ -28,7 +27,7 @@ class QuestionController extends Controller
         foreach ($search as $key => $value) {
             if (in_array($key, ['category_id', 'is_pic', 'user_id', 'choice_num', 'is_plural'])) {
                 $questions = $questions->where($key, $value);
-            } elseif (in_array($key, ['content'])) {
+            } elseif (in_array($key, ['title'])) {
                 $questions = $questions->where($key, 'LIKE', '%'.$value.'%');
             }
         }
@@ -39,7 +38,20 @@ class QuestionController extends Controller
 
     public function show($question_id)
     {
-        $question = Question::findOrFail($question_id);
+        $question       = Question::findOrFail($question_id);
+        $answers        = [];
+        $all_answers    = Answer::where('question_id', $question_id)->get();
+        $right_answer   = $all_answers->where('is_right', 1)->random(1);
+        $num            = count($right_answer);
+        $mistake_answer = $all_answers->where('is_right', 0)->random($question->choice_num - $num);
+        foreach ($right_answer as $value) {
+            $answers[] = $value->only(['id', 'question_id', 'choice']);
+        }
+        foreach ($mistake_answer as $val) {
+            $answers[] = $val->only(['id', 'question_id', 'choice']);
+        }
+        shuffle($answers);
+        return $answers;
 
         return $question->tojson();
     }
@@ -50,7 +62,8 @@ class QuestionController extends Controller
             'content'           =>  'required|string',
             'is_pic'            =>  'required|boolean',
             'is_plural'         =>  'required|boolean',
-            'choice_num'        =>  'required|integer'
+            'choice_num'        =>  'required|integer',
+            'right_num'         =>  'required_if:'
         ]);
 
         $question = Question::create($request, [

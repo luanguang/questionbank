@@ -31,12 +31,16 @@ Route::group(['namespace' => 'Admin', 'middleware' => 'auth'], function () {
     });
 
     Route::group(['prefix'  =>  'question'], function () {
-        Route::get('/', 'QuestionController@index');
-        Route::post('/', 'QuestionController@store');
+        Route::get('/index', 'QuestionController@index');
+        Route::get('/{question_id}/show', 'QuestionController@show');
+        Route::post('/create', 'QuestionController@store');
+        Route::put('/{question_id}/edit', 'QuestionController@update');
         Route::delete('/{question_id}', 'QuestionController@destroy');
 
         //Answer
-        Route::post('/', 'AnswerController@store');
+        Route::get('/{question_id}/show', 'QuestionController@show');
+        Route::post('/create', 'AnswerController@store');
+        Route::put('/{question_id}/edit', 'QuestionController@update');
         Route::delete('/{question_id}', 'AnswerController@destroy');
     });
 });
@@ -48,17 +52,18 @@ Route::group(['namespace' => 'Web'], function () {
     });
 
     Route::group(['prefix' => 'question'], function () {
-        Route::get('/', 'QuestionController@index');
-        Route::get('/{question_id}', 'QuestionController@show');
-        Route::put('/{question_id}', 'QuestionController@update');
-        Route::post('/', 'QuestionController@store');
+        Route::get('/index', 'QuestionController@index');
+        Route::get('/{question_id}/show', 'QuestionController@show');
+        Route::put('/{question_id}/edit', 'QuestionController@update');
+        Route::post('/create', 'QuestionController@store');
         Route::delete('/{question_id}', 'QuestionController@destroy');
 
         //Answer
-        Route::get('/{question_id}/answer', 'AnswerController@show');
-        Route::put('/{question_id}/answer/{answer_id}', 'AnswerController@update');
-        Route::post('/{question_id}/answer', 'AnswerController@store');
-        Route::delete('/{question_id}/answer/{answer_id}', 'AnswerController@destroy');
+        Route::get('/{question_id}/show', 'AnswerController@show');
+        Route::put('/{question_id}/edit', 'AnswerController@update');
+        Route::post('/create', 'AnswerController@store');
+        Route::delete('/{question_id}', 'AnswerController@destroy');
+        Route::post('/{question_id}/show', 'AnswerController@reply');
     });
 
     Route::group(['prefix' => 'category'], function () {

@@ -15,10 +15,10 @@ class CreateQuestionsTable extends Migration
     {
         Schema::create('questions', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('content');
+            $table->string('title');
             $table->boolean('is_pic')->default(0);
-            $table->boolean('is_plural')->default(0);
             $table->integer('choice_num');
+            $table->integer('great_question')->default(0);
             $table->integer('test_num')->default(0);
             $table->integer('category_id');
             $table->integer('user_id');

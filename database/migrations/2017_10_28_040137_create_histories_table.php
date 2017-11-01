@@ -19,6 +19,7 @@ class CreateHistoriesTable extends Migration
             $table->integer('question_id');
             $table->string('content');
             $table->integer('category_id');
+            $table->boolean('is_answer');
             $table->timestamps();
         });
     }

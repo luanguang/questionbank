@@ -12,17 +12,19 @@ class AnswerController extends Controller
     public function show($question_id)
     {
         $question       = Question::findOrFail($question_id);
-        if ($question->is_plural == 0) {
-            $answers        = Answer::where('question_id', $question_id)->select('id', 'question_id', 'choice')->get();
-            $right_answer   = $answers->where('is_right', 1)->toArray();
-        } else {
-            $right_answer   = Answer::where(['question_id' => $question_id, 'is_right' => 1])->select('id', 'question_id', 'choice')->get()->toArray();
-            $num            = count($right_answer);
-            $mistake_answer = Answer::where(['question_id' => $question_id, 'is_right' => 0])->select('id', 'question_id', 'choice')->inRandomOrder()->limit($question->choice_num - $num)->get()->toArray();
-            $answers        = array_merge($right_answer, $mistake_answer);
+        $answers        = [];
+        $all_answers    = Answer::where('question_id', $question_id)->get();
+        $right_answer   = $all_answers->where('is_right', 1)->random(1);
+        $num            = count($right_answer);
+        $mistake_answer = $all_answers->where('is_right', 0)->random($question->choice_num - $num);
+        foreach ($right_answer as $value) {
+            $answers[] = $value->only(['id', 'question_id', 'choice']);
         }
-
-        return shuffle($answers)->tojson();
+        foreach ($mistake_answer as $val) {
+            $answers[] = $val->only(['id', 'question_id', 'choice']);
+        }
+        shuffle($answers);
+        return $answers;
     }
 
     public function store(Request $request, $question_id)

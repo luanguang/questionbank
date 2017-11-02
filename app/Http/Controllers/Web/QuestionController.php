@@ -25,7 +25,7 @@ class QuestionController extends Controller
 
         $questions = new Question;
         foreach ($search as $key => $value) {
-            if (in_array($key, ['category_id', 'is_pic', 'user_id', 'choice_num', 'is_plural'])) {
+            if (in_array($key, ['category_id', 'is_pic', 'user_id', 'choice_num'])) {
                 $questions = $questions->where($key, $value);
             } elseif (in_array($key, ['title'])) {
                 $questions = $questions->where($key, 'LIKE', '%'.$value.'%');
@@ -61,15 +61,13 @@ class QuestionController extends Controller
         $this->validate($request, [
             'content'           =>  'required|string',
             'is_pic'            =>  'required|boolean',
-            'is_plural'         =>  'required|boolean',
             'choice_num'        =>  'required|integer',
             'right_num'         =>  'required_if:'
         ]);
 
-        $question = Question::create($request, [
+        $question = Question::create([
             'content'           =>  $request->input('content'),
-            'is_pic'   =>  $request->input('is_pic'),
-            'is_plural'         =>  $request->input('is_plural'),
+            'is_pic'            =>  $request->input('is_pic'),
             'choice_num'        =>  $request->input('choice_num')
         ]);
 
@@ -85,7 +83,7 @@ class QuestionController extends Controller
         ]);
 
         $question = Question::findOrFail($question_id);
-        $question->update($request, [
+        $question->update([
             'content'           =>  $request->input('content'),
             'is_plural'         =>  $request->input('is_plural'),
             'choice_num'        =>  $request->input('choice_num')

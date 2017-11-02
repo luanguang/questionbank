@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateQuestionsTable extends Migration
+class CreateTranscriptsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,11 @@ class CreateQuestionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('questions', function (Blueprint $table) {
+        Schema::create('transcripts', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('title');
-            $table->boolean('is_pic')->default(0);
-            $table->integer('choice_num');
-            $table->integer('great_question')->default(0);
-            $table->integer('test_num')->default(0);
-            $table->integer('category_id');
-            $table->integer('user_id');
             $table->integer('paper_id');
+            $table->integer('user_id');
+            $table->integer('score');
             $table->timestamps();
         });
     }
@@ -34,6 +29,6 @@ class CreateQuestionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('questions');
+        Schema::dropIfExists('transcripts');
     }
 }

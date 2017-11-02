@@ -15,11 +15,19 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::group(['namespace' => 'Auth'], function () {
+    Route::post('login', 'AuthenticateController@login');
+    Route::post('register', 'AuthenticateController@register');
+    Route::post('logout', 'AuthenticateController@logout');
+});
+
 Route::group(['namespace' => 'Admin', 'middleware' => 'auth'], function () {
     Route::group(['prefix' => 'user'], function () {
         Route::get('/', 'UserController@index');
         Route::get('/{user_id}', 'UserController@show');
         Route::delete('/{user_id}', 'UserController@destroy');
+
+
     });
 
     Route::group(['prefix' => 'category'], function () {

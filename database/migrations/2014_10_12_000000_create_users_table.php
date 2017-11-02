@@ -17,6 +17,8 @@ class CreateUsersTable extends Migration
             $table->increments('id');
             $table->string('avatar_path')->nullable();
             $table->string('name');
+            $table->enum('status', ['teacher', 'student']);
+            $table->string('student_id')->unique();
             $table->string('phone')->nullable();
             $table->string('qq')->nullable();
             $table->string('wechat')->nullable();

@@ -23,27 +23,11 @@ class UserController extends Controller
         ]);
 
         $user = Auth::user();
-        $user->update($request, [
+        $user->update([
             'name'  =>  $request->input('name')
         ]);
 
         return $user->toJson();
     }
 
-    public function store(Request $request)
-    {
-        $this->validate($request, [
-            'name'          => 'required|string|max:255',
-            'email'         => 'required|string|email|max:255|unique:users',
-            'password'      => 'required|string|min:6|confirmed',
-        ]);
-
-        User::create($request, [
-            'name'      =>  $request->input('name'),
-            'email'     =>  $request->input('email'),
-            'password'  =>  bcrypt($request->input('password'))
-        ]);
-
-        return with('success');
-    }
 }

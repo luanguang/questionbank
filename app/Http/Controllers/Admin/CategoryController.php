@@ -12,7 +12,7 @@ class CategoryController extends Controller
     {
         $categories = Category::orderBy('id', 'DESC')->paginate(20);
 
-        return $categories->tojson();
+        return response()->json(['categories'   =>  $categories]);
     }
 
     public function show($category_id)
@@ -34,7 +34,7 @@ class CategoryController extends Controller
             'parent_id'     => $request->input('parent_id')
         ]);
 
-        return $category->toJson();
+        return response()->json(['category' =>  $category, 'code'   =>  201]);
     }
 
     public function update(Request $request, $category_id)

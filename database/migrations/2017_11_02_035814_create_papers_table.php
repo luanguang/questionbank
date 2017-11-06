@@ -17,8 +17,11 @@ class CreatePapersTable extends Migration
             $table->increments('id');
             $table->string('title');
             $table->string('teacher_name');
+            $table->integer('category_id');
             $table->integer('question_num');
             $table->integer('total_score');
+            $table->integer('score');
+            $table->boolean('is_online')->default(0);
             $table->integer('test_hours')->nullable();
             $table->timestamps();
         });

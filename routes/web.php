@@ -21,13 +21,19 @@ Route::group(['namespace' => 'Auth'], function () {
     Route::post('logout', 'AuthenticateController@logout');
 });
 
-Route::group(['namespace' => 'Admin', 'middleware' => 'auth'], function () {
+Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => 'jwt.auth'], function () {
     Route::group(['prefix' => 'user'], function () {
         Route::get('/', 'UserController@index');
         Route::get('/{user_id}', 'UserController@show');
         Route::delete('/{user_id}', 'UserController@destroy');
+    });
 
-
+    Route::group(['prefix' => 'paper'], function () {
+        Route::get('/', 'PaperController@index');
+        Route::get('/{paper_id}', 'PaperController@show');
+        Route::post('/create', 'PaperController@store');
+        Route::put('/{paper_id}', 'PaperController@update');
+        Route::delete('/{paper_id}', 'PaperController@destroy');
     });
 
     Route::group(['prefix' => 'category'], function () {
@@ -54,7 +60,7 @@ Route::group(['namespace' => 'Admin', 'middleware' => 'auth'], function () {
 });
 
 Route::group(['namespace' => 'Web'], function () {
-    Route::group(['prefix' => 'user', 'middleware' => 'auth'], function () {
+    Route::group(['prefix' => 'user'], function () {
         Route::get('/{user_id}', 'UserController@show');
         Route::put('/{user_id}', 'UserController@update');
     });

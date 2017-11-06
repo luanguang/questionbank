@@ -11,34 +11,28 @@ use Validator, Input, Redirect;
 
 class AuthenticateController extends Controller
 {
-    /**
-     * Authenticate an user.
-     *
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function login(Request $request)
     {
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->only('name', 'password');
+        $user        = User::where('name', $credentials['name'])->first();
 
-        $validator = Validator::make($credentials, [
-            'email' => 'required|email',
-            'password' => 'required'
+        $validator   = Validator::make($credentials, [
+            'name'      => 'required|string',
+            'password'  => 'required',
         ]);
 
         if ($validator->fails()) {
-            return response()
-                ->json([
-                    'code' => 1,
-                    'message' => 'Validation failed.',
-                    'errors' => $validator->errors()
+            return response()->json([
+                    'code'      => 1,
+                    'message'   => 'Validation failed.',
+                    'errors'    => $validator->errors()
                 ], 422);
         }
 
         $token = JWTAuth::attempt($credentials);
 
         if ($token) {
-            return response()->json(['token' => $token]);
+            return response()->json(['token' => $token, 'user'  =>  $user]);
         } else {
             return response()->json(['code' => 2, 'message' => 'Invalid credentials.'], 401);
         }
@@ -61,11 +55,10 @@ class AuthenticateController extends Controller
     {
         $rules = [
             'name'          => 'required|max:255',
-            'email'         => 'required|email|max:255|unique:users',
-            'student_id'    => 'required|integer|min:0',
             'password'      => 'required|confirmed|min:6',
+            'profession'    => 'required|string|in:teacher,student'
         ];
-        $input = $request->only('name', 'student_id', 'email', 'password', 'password_confirmation');
+        $input = $request->only('name', 'profession', 'password', 'password_confirmation');
         $validator = Validator::make($input, $rules);
 
         if ($validator->fails()) {
@@ -75,8 +68,7 @@ class AuthenticateController extends Controller
 
         User::create([
             'name'          =>  $request->input('name'),
-            'email'         =>  $request->input('email'),
-            'student_id'    =>  $request->input('student_id'),
+            'profession'    =>  $request->input('profession'),
             'password'      =>  bcrypt($request->input('password'))
         ]);
 
@@ -86,5 +78,8 @@ class AuthenticateController extends Controller
     public function logout()
     {
         $this->logout();
+        JWTAuth::invalidate(JWTAuth::getToken());
+
+        return;
     }
 }

@@ -12,4 +12,10 @@ class Paper extends Model
     {
         return $this->belongsTo('App\Models\Category', 'category_id');
     }
+
+    public function questions()
+    {
+        return $this->hasMany('App\Models\Question', 'paper_id');
+    }
+
 }

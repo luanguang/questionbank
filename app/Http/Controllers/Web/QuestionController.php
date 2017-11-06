@@ -56,49 +56,4 @@ class QuestionController extends Controller
         return $question->tojson();
     }
 
-    public function store(Request $request)
-    {
-        $this->validate($request, [
-            'content'           =>  'required|string',
-            'is_pic'            =>  'required|boolean',
-            'choice_num'        =>  'required|integer',
-            'right_num'         =>  'required_if:'
-        ]);
-
-        $question = Question::create([
-            'content'           =>  $request->input('content'),
-            'is_pic'            =>  $request->input('is_pic'),
-            'choice_num'        =>  $request->input('choice_num')
-        ]);
-
-        return $question->tojson();
-    }
-
-    public function update(Request $request, $question_id)
-    {
-        $this->validate($request, [
-            'content'           =>  'required|string',
-            'is_plural'         =>  'required|boolean',
-            'choice_num'        =>  'required|integer'
-        ]);
-
-        $question = Question::findOrFail($question_id);
-        $question->update([
-            'content'           =>  $request->input('content'),
-            'is_plural'         =>  $request->input('is_plural'),
-            'choice_num'        =>  $request->input('choice_num')
-        ]);
-
-        return $question->tojson();
-    }
-
-    public function destroy($question_id)
-    {
-        $question = Question::findOrFail($question_id);
-        $answers  = Answer::where('question_id', $question_id);
-        $question->delete();
-        $answers->delete();
-
-        return;
-    }
 }

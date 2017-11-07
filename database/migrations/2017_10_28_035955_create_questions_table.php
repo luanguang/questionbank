@@ -18,6 +18,7 @@ class CreateQuestionsTable extends Migration
             $table->string('title');
             $table->boolean('is_pic')->default(0);
             $table->integer('choice_num');
+            $table->integer('score');
             $table->integer('great_question')->default(0);
             $table->integer('test_num')->default(0);
             $table->integer('category_id');

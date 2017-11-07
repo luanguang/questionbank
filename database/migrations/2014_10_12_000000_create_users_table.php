@@ -24,6 +24,7 @@ class CreateUsersTable extends Migration
             $table->string('wechat')->nullable();
             $table->string('address')->nullable();
             $table->string('password');
+            $table->integer('integral')->default(0);
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

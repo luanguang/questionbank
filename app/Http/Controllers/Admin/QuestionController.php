@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Requests\AnswerRequest;
 use App\Models\Answer;
 use App\Models\Question;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class QuestionController extends Controller
 {
@@ -34,33 +36,24 @@ class QuestionController extends Controller
         }
         $question = $question->orderBy('id', 'DESC')->paginate(20);
 
-        return $question->tojson();
+        return response()->json(['question' => $question]);
     }
 
-    public function store(Request $request, $question_id)
+    public function store(AnswerRequest $request)
     {
-        $this->validate($request, [
-            'title'         =>  'required|string',
-            'is_pic'        =>  'required|boolean',
-            'choice_num'    =>  'required|integer|min:0',
-            'category_id'   =>  'required|integer|min:0',
-        ]);
-
-        $question = create([
+        $question = Question::create([
             'title'         =>  $request->input('title'),
             'is_pic'        =>  $request->input('is_pic'),
             'choice_num'    =>  $request->input('choice_num'),
-            'category_id'   =>  $request->input('category_id')
+            'category_id'   =>  $request->input('category_id'),
+            'score'         =>  $request->input('score'),
+            'user_id'       =>  Auth::user()->id,
+            'paper_id'      =>  $request->input('paper_id')
         ]);
 
-        foreach ($request->input('choices') as $choice) {
-           //
-        }
+        $choice = Answer::insert($request->input('choice'));
 
-        $choices = insert([$request->input('choices')]);
-
-        return response()->json(['question' => $question, 'choices' => $choices]);
-
+        return response()->json(['question' => $question, 'choice' => $choice]);
     }
 
     public function destroy($question_id)

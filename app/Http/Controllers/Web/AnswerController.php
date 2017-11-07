@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Models\Answer;
+use App\Models\Paper;
 use App\Models\Question;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -26,29 +27,5 @@ class AnswerController extends Controller
         shuffle($answers);
         return $answers;
     }
-
-    public function store(Request $request, $question_id)
-    {
-        $this->validate($request, [
-            'choice'        =>  'required|string',
-            'detail'        =>  'string',
-        ]);
-
-        $answer = Answer::create($request, [
-            'question_id'   =>  $question_id,
-            'choice'        =>  $request->input('choice'),
-            'is_right'      =>  $request->input('is_right'),
-
-        ]);
-    }
-
-    public function destroy($answer_id)
-    {
-        $answer = Answer::findOrFail($answer_id);
-        $answer->delete();
-
-        return;
-    }
-
 
 }

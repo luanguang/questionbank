@@ -67,6 +67,8 @@ Route::group(['namespace' => 'Web'], function () {
 
     Route::group(['prefix' => 'paper'], function () {
         Route::get('/', 'PaperController@index');
+        Route::get('/{paper_id}', 'PaperController@show');
+        Route::post('/{paper_id}', 'PaperController@getScore');
     });
 
     Route::group(['prefix' => 'question'], function () {

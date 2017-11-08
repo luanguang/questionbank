@@ -7,6 +7,7 @@ use App\Models\Paper;
 use App\Models\Transcript;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class PaperController extends Controller
 {
@@ -19,7 +20,7 @@ class PaperController extends Controller
 
     public function show($paper_id)
     {
-        $paper          = Paper::with('questions', 'category')->findOrFail($paper_id);
+        $paper          = Paper::with('category')->findOrFail($paper_id);
         $questions      = $paper->questions;
         $question_id    = [];
         foreach ($questions as $value) {
@@ -27,7 +28,7 @@ class PaperController extends Controller
         }
         $answers        = Answer::whereIn('question_id', $question_id)->select('id', 'question_id', 'choice')->get();
 
-        return response()->json(['paper' => $paper, 'answers' => $answers]);
+        return response()->json(['paper' => $paper, 'answers' => $answers, 'questions' => $questions]);
     }
 
     public function getScore(Request $request, $paper_id)
@@ -35,15 +36,19 @@ class PaperController extends Controller
         $choices        = $request->input('choices');
         $choice_id      = [];
         foreach ($choices as $choice) {
-            $choice_id[] = $choice->only(['id']);
+            $choice_id[] = $choice['id'];
         }
-        $all_choice     = Answer::whereIn('id', $choice_id)->get();
-        $right_choice   = count($all_choice->where('is_right', 1));
-        $paper          = Paper::findOrFail($paper_id);
-        $transcript     = Transcript::create([
-            'paper_id'  =>  $paper_id,
-            'user_id'   =>  Auth::user()->id,
-            'score'     =>  $paper->score * $right_choice
+        $all_choice     = Answer::with('question')->whereIn('id', $choice_id)->get();
+        $score          = 0;
+        foreach ($all_choice as $temp) {
+            if ($temp->is_right == 1) {
+                $score  += $temp->question->score;
+            }
+        }
+        $transcript = Transcript::create([
+            'paper_id'      =>  $paper_id,
+            'user_id'       =>  Auth::user()->id,
+            'score'         =>  $score
         ]);
 
         return response()->json(['transcript' => $transcript]);

@@ -12,14 +12,14 @@ class UserController extends Controller
     {
         $users = User::orderBy('id', 'DESC')->paginate(20);
 
-        return $users;
+        return response()->json(['users' => $users]);
     }
 
     public function show($user_id)
     {
         $user = User::findOrFail($user_id);
 
-        return $user;
+        return response()->json(['user' => $user]);
     }
 
     public function destroy($user_id)

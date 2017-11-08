@@ -16,8 +16,7 @@ class CreateQuestionsTable extends Migration
         Schema::create('questions', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
-            $table->boolean('is_pic')->default(0);
-            $table->integer('choice_num');
+            $table->boolean('is_pic')->nullable();
             $table->integer('score');
             $table->integer('great_question')->default(0);
             $table->integer('test_num')->default(0);

@@ -32,8 +32,10 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => 'jwt.
         Route::get('/', 'PaperController@index');
         Route::get('/{paper_id}', 'PaperController@show');
         Route::post('/', 'PaperController@store');
+        Route::post('/{paper_id}', 'QuestionController@store');
         Route::put('/{paper_id}', 'PaperController@update');
         Route::delete('/{paper_id}', 'PaperController@destroy');
+        Route::put('/{paper_id}/online', 'PaperController@online');
     });
 
     Route::group(['prefix' => 'category'], function () {
@@ -47,19 +49,17 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => 'jwt.
     Route::group(['prefix'  =>  'question'], function () {
         Route::get('/', 'QuestionController@index');
         Route::get('/{question_id}/show', 'QuestionController@show');
-        Route::post('/', 'QuestionController@store');
         Route::put('/{question_id}', 'QuestionController@update');
         Route::delete('/{question_id}', 'QuestionController@destroy');
 
         //Answer
-        Route::get('/{question_id}/show', 'QuestionController@show');
-        Route::post('/create', 'AnswerController@store');
-        Route::put('/{question_id}/edit', 'QuestionController@update');
-        Route::delete('/{question_id}', 'AnswerController@destroy');
+//        Route::get('/{question_id}', 'QuestionController@show');
+//        Route::put('/{question_id}', 'QuestionController@update');
+//        Route::delete('/{question_id}', 'AnswerController@destroy');
     });
 });
 
-Route::group(['namespace' => 'Web'], function () {
+Route::group(['namespace' => 'Web', 'middleware' => 'jwt.auth'], function () {
     Route::group(['prefix' => 'user'], function () {
         Route::get('/{user_id}', 'UserController@show');
         Route::put('/{user_id}', 'UserController@update');

@@ -62,8 +62,6 @@ class PaperController extends Controller
             'category_id'   =>  'integer|min:0',
             'question_num'  =>  'integer|min:0',
             'total_score'   =>  'integer|min:0',
-            'score'         =>  'integer|min:0',
-            'is_online'     =>  'boolean',
             'test_hours'    =>  'integer|min:0'
         ]);
 
@@ -73,8 +71,6 @@ class PaperController extends Controller
             'category_id'   =>  $request->input('category_id'),
             'question_num'  =>  $request->input('question_num'),
             'total_score'   =>  $request->input('total_score'),
-            'score'         =>  $request->input('score'),
-            'is_online'     =>  $request->input('is_online'),
             'test_hours'    =>  $request->input('test_hours')
         ]);
 
@@ -86,6 +82,20 @@ class PaperController extends Controller
         $paper = Paper::findOrFail($paper_id);
         $paper->delete();
 
-        return response()->json(['success' => true]);
+        return response()->json(['success' => "删除成功"]);
+    }
+
+    public function online(Request $request, $paper_id)
+    {
+        $this->validate($request, [
+            'is_online'     =>  'required|boolean'
+        ]);
+
+        $paper = Paper::findOrFail($paper_id);
+        $paper->update([
+            'is_online'     =>  $request->input('is_online')
+        ]);
+
+        return response()->json(['paper' => $paper]);
     }
 }

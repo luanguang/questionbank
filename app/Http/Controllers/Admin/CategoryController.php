@@ -19,7 +19,7 @@ class CategoryController extends Controller
     {
         $category = Category::findOrFail($category_id);
 
-        return $category->tojson();
+        return response()->json(['category' =>  $category]);
     }
 
     public function store(Request $request)
@@ -50,7 +50,7 @@ class CategoryController extends Controller
             'parent_id'     =>  $request->input('parent_id')
         ]);
 
-        return $category->tojson();
+        return response()->json(['category' =>  $category]);
     }
 
     public function destroy($category_id)
@@ -58,6 +58,6 @@ class CategoryController extends Controller
         $category = Category::findOrFail($category_id);
         $category->delete();
 
-        return;
+        return response()->json(['code' => 204, 'success' => "删除成功"]);
     }
 }

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Auth;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use Tymon\JWTAuth\Exceptions\JWTException;
 use App\Http\Controllers\Controller;
 use Validator, Input, Redirect;
 
@@ -34,7 +33,7 @@ class AuthenticateController extends Controller
         if ($token) {
             return response()->json(['token' => $token, 'user'  =>  $user]);
         } else {
-            return response()->json(['code' => 2, 'message' => 'Invalid credentials.'], 401);
+            return response()->json(['code' => 2, 'message' => '账号或密码错误'], 401);
         }
     }
 

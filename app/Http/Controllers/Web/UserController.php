@@ -13,21 +13,12 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
-        return $user->toJson();
+        return response()->json(['user' => $user]);
     }
 
     public function update(Request $request)
     {
-        $this->validate($request, [
-            'name'      =>  'string',
-        ]);
 
-        $user = Auth::user();
-        $user->update([
-            'name'  =>  $request->input('name')
-        ]);
-
-        return $user->toJson();
     }
 
 }

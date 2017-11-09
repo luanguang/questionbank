@@ -52,6 +52,7 @@ class QuestionController extends Controller
         ]);
 
         $choice =   $request->input('choice');
+        dd($choice);
         foreach ($choice as &$value) {
             $value['question_id']   =  $question->id;
             $value['created_at']    =  Carbon::now()->addHours(8);

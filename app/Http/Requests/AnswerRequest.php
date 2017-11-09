@@ -28,7 +28,6 @@ class AnswerRequest extends FormRequest
             'is_pic'                    =>  'boolean',
             'category_id'               =>  'required|integer|min:0',
             'choice.*.choice'           =>  'required|string',
-            'choice.*.question_id'      =>  'required|integer|min:0',
             'choice.*.is_right'         =>  'required|integer|min:0',
             'choice.*.detail'           =>  'string'
         ];

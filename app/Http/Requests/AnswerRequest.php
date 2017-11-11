@@ -27,9 +27,8 @@ class AnswerRequest extends FormRequest
             'title'                     =>  'required|string',
             'is_pic'                    =>  'boolean',
             'category_id'               =>  'required|integer|min:0',
-            'choice.*.choice'           =>  'required|string',
-            'choice.*.is_right'         =>  'required|integer|min:0',
-            'choice.*.detail'           =>  'string'
+            'score'                     =>  'required|integer|min:0',
+            'choice.*'                  =>  'required|string'
         ];
     }
 }

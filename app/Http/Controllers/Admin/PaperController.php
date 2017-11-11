@@ -26,7 +26,7 @@ class PaperController extends Controller
         foreach ($questions as $value) {
             $question_id[] = $value->id;
         }
-        $answers        = Answer::whereIn('question_id', $question_id)->select('id', 'question_id', 'choice')->get();
+        $answers        = Answer::whereIn('question_id', $question_id)->select('id', 'question_id', 'choice', 'is_right')->get();
 
         return response()->json(['paper' => $paper, 'answers' => $answers]);
     }

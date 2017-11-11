@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Models\Answer;
 use App\Models\Paper;
+use App\Models\Question;
 use App\Models\Transcript;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -21,24 +22,16 @@ class PaperController extends Controller
     public function show($paper_id)
     {
         $paper          = Paper::with('category')->findOrFail($paper_id);
-        $questions      = $paper->questions;
-        $question_id    = [];
-        foreach ($questions as $value) {
-            $question_id[] = $value->id;
-        }
-        $answers        = Answer::whereIn('question_id', $question_id)->select('id', 'question_id', 'choice')->get();
+        $questions      = Question::with(['answers'=>function($var) {$var->select('id', 'question_id', 'choice');}])->where('paper_id', $paper_id)->get();
 
-        return response()->json(['paper' => $paper, 'answers' => $answers, 'questions' => $questions]);
+
+        return response()->json(['paper' => $paper, 'questions' => $questions]);
     }
 
     public function getScore(Request $request, $paper_id)
     {
         $choices        = $request->input('choices');
-        $choice_id      = [];
-        foreach ($choices as $choice) {
-            $choice_id[] = $choice['id'];
-        }
-        $all_choice     = Answer::with('question')->whereIn('id', $choice_id)->get();
+        $all_choice     = Answer::with('question')->whereIn('id', $choices)->get();
         $score          = 0;
         foreach ($all_choice as $temp) {
             if ($temp->is_right == 1) {

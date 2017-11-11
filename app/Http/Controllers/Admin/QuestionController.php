@@ -24,12 +24,12 @@ class QuestionController extends Controller
         ]);
 
         $question = new Question;
-        $search   = array_filter($request->only('title', 'category_id', 'is_pic', 'is_plural', 'choice_num', 'user_id'), function ($var) {
+        $search   = array_filter($request->only('title', 'category_id', 'is_pic', 'user_id'), function ($var) {
             return !empty($var);
         });
 
         foreach ($search as $key => $value) {
-            if (in_array($key, ['category_id', 'is_pic', 'is_plural', 'choice_num', 'user_id'])) {
+            if (in_array($key, ['category_id', 'is_pic', 'user_id'])) {
                 $question = $question->where($key, $value);
             } elseif (in_array($key, ['title'])) {
                 $question = $question->where($key, 'LIKE', '%'.$value.'%');
@@ -51,23 +51,28 @@ class QuestionController extends Controller
             'paper_id'      =>  $paper_id
         ]);
 
-        $choice =   $request->input('choice');
-        dd($choice);
-        foreach ($choice as &$value) {
-            $value['question_id']   =  $question->id;
-            $value['created_at']    =  Carbon::now()->addHours(8);
+        $choice  =   $request->input('choice');
+        $right   =   $request->input('is_right');
+        $choices = [];
+        for ($i = 0; $i<count($choice); $i++) {
+            $choices[$i]['choice']          = $choice[$i];
+            $choices[$i]['question_id']     = $question->id;
+            if ($i == $right[0]) {
+                $choices[$i]['is_right']    = 1;
+            } else {
+                $choices[$i]['is_right']    = 0;
+            }
+            $choices[$i]['created_at']      = Carbon::now();
         }
-        $choice = Answer::insert($choice);
+        $choices = Answer::insert($choices);
 
-
-        return response()->json(['question' => $question, 'choice' => $choice]);
+        return response()->json(['choices' => $choices, 'question' => $question]);
     }
 
     public function update(Request $request, $question_id)
     {
         $this->validate($request, [
             'title'         =>  'string',
-            'choice_num'    =>  'integer',
             'category_id'   =>  'integer',
             'score'         =>  'integer',
         ]);
@@ -75,22 +80,28 @@ class QuestionController extends Controller
         $question = Question::findOrFail($question_id);
         $question->update([
             'title'         =>  $request->input('title'),
-            'choice_num'    =>  $request->input('choice_num'),
             'category_id'   =>  $request->input('category_id'),
             'score'         =>  $request->input('score')
         ]);
+        $answers = $question->answers->toArray();
+        $choices = $request->input('choice');
+        $right   = $request->input('is_right');
+        for ($i = 0; $i<count($answers); $i++) {
+            $ans = Answer::findOrFail($answers[$i]['id']);
+            if ($right[0] == $i) {
+                $ans->update([
+                    'choice'        =>   $choices[$i],
+                    'is_right'      =>  1
+                ]);
+            } else {
+                $ans->update([
+                    'choice'        =>  $choices[$i],
+                    'is_right'      =>  0
+                ]);
+            }
+        }
 
-        $this->validate($request, [
-            'answer_id'     =>  'integer'
-        ]);
-
-        $answer = Answer::findOrFail($request->input('answer_id'));
-        $answer->update([
-            'choice'        =>  $request->input('choice'),
-            'detail'        =>  $request->input('detail')
-        ]);
-
-        return response()->json(['question' => $question, 'answer' => $answer]);
+        return response()->json(['question' => $question]);
     }
 
     public function destroy($question_id)

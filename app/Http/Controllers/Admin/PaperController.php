@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\Auth;
 
 class PaperController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $papers = Paper::with('category')->where('teacher_name', Auth::user()->name)->orderBy('id', 'DESC')->paginate(10);
+        $papers = Paper::with('category')->where('teacher_name', Auth::user()->name)->whereBetween('created_at', [$request->input('start'), $request->input('end')])->orderBy('id', 'DESC')->paginate(10);
 
         return response()->json(['papers' => $papers]);
     }

@@ -57,8 +57,8 @@ class AuthenticateController extends Controller
             'password'      => 'required|confirmed|min:6',
             'profession'    => 'required|string|in:teacher,student'
         ];
-        $input = $request->only('name', 'profession', 'password', 'password_confirmation');
-        $validator = Validator::make($input, $rules);
+        $input      = $request->only('name', 'profession', 'password', 'password_confirmation');
+        $validator  = Validator::make($input, $rules);
 
         if ($validator->fails()) {
             $error = $validator->messages()->tojson();

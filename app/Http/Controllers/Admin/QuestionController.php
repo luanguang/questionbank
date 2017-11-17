@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\AnswerRequest;
-use App\Models\Answer;
+use App\Models\Choice;
 use App\Models\Question;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -64,7 +64,7 @@ class QuestionController extends Controller
             }
             $choices[$i]['created_at']      = Carbon::now();
         }
-        $choices = Answer::insert($choices);
+        $choices = Choice::insert($choices);
 
         return response()->json(['choices' => $choices, 'question' => $question]);
     }
@@ -87,10 +87,10 @@ class QuestionController extends Controller
         $choices = $request->input('choice');
         $right   = $request->input('is_right');
         for ($i = 0; $i<count($answers); $i++) {
-            $ans = Answer::findOrFail($answers[$i]['id']);
+            $ans = Choice::findOrFail($answers[$i]['id']);
             if ($right[0] == $i) {
                 $ans->update([
-                    'choice'        =>   $choices[$i],
+                    'choice'        =>  $choices[$i],
                     'is_right'      =>  1
                 ]);
             } else {
@@ -108,7 +108,7 @@ class QuestionController extends Controller
     {
         $question = Question::findOrFail($question_id);
         $question->delete();
-        Answer::where('question_id', $question_id)->delete();
+        Choice::where('question_id', $question_id)->delete();
 
         return response()->json(['success' => "删除成功", 'code' => 204]);
     }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Web;
 
-use App\Models\Answer;
+use App\Models\Choice;
 use App\Models\Paper;
 use App\Models\Question;
 use App\Models\Transcript;
@@ -32,7 +32,7 @@ class PaperController extends Controller
     public function getScore(Request $request, $paper_id)
     {
         $choices        = $request->input('choices');
-        $all_choice     = Answer::with('question')->whereIn('id', $choices)->get();
+        $all_choice     = Choice::with('question')->whereIn('id', $choices)->get();
         $score          = 0;
         foreach ($all_choice as $temp) {
             if ($temp->is_right == 1) {

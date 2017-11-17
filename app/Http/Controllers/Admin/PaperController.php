@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Answer;
+use App\Models\Choice;
 use App\Models\Paper;
 use App\Models\Question;
 use Illuminate\Http\Request;
@@ -26,7 +26,7 @@ class PaperController extends Controller
         foreach ($questions as $value) {
             $question_id[] = $value->id;
         }
-        $answers        = Answer::whereIn('question_id', $question_id)->select('id', 'question_id', 'choice', 'is_right')->get();
+        $answers        = Choice::whereIn('question_id', $question_id)->select('id', 'question_id', 'choice', 'is_right')->get();
 
         return response()->json(['paper' => $paper, 'answers' => $answers]);
     }

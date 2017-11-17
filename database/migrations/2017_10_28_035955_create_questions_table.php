@@ -18,6 +18,7 @@ class CreateQuestionsTable extends Migration
             $table->string('title');
             $table->boolean('is_pic')->nullable();
             $table->integer('score');
+            $table->enum('difficult', ['1', '2', '3', '4', '5']);
             $table->integer('great_question')->default(0);
             $table->integer('test_num')->default(0);
             $table->integer('category_id');

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helper\ImageHelper;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -28,5 +30,23 @@ class UserController extends Controller
         $user->delete();
 
         return;
+    }
+
+    public function avatar(Request $request)
+    {
+        $this->validate($request, [
+            'pic'   =>  'required|image'
+        ]);
+
+        $file = $request->file('pic');
+        if ($file->isValid()) {
+            $path = ImageHelper::saveImage($file);
+        }
+        $user = Auth::user();
+        $user->update([
+            'avatar_path'   =>  !empty($path) ? $path : 1
+        ]);
+
+        return response()->json(['user' => $user]);
     }
 }

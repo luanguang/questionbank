@@ -15,10 +15,10 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('avatar_path')->nullable();
             $table->string('name')->unique();
+            $table->boolean('is_admin')->default(0);
+            $table->string('avatar_path')->nullable();
             $table->enum('profession', ['teacher', 'student']);
-            $table->string('student_id')->nullable();
             $table->string('phone')->nullable();
             $table->string('qq')->nullable();
             $table->string('wechat')->nullable();

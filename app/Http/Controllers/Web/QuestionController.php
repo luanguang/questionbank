@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Models\Question;
-use App\Models\Answer;
+use App\Models\Choice;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -40,7 +40,7 @@ class QuestionController extends Controller
     {
         $question       = Question::findOrFail($question_id);
         $answers        = [];
-        $all_answers    = Answer::where('question_id', $question_id)->get();
+        $all_answers    = Choice::where('question_id', $question_id)->get();
         $right_answer   = $all_answers->where('is_right', 1)->random(1);
         $num            = count($right_answer);
         $mistake_answer = $all_answers->where('is_right', 0)->random($question->choice_num - $num);

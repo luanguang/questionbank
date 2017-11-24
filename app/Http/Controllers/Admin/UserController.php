@@ -12,7 +12,11 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $users = User::orderBy('id', 'DESC')->paginate(20);
+        $this->validate($request, [
+            'name'      =>  'string'
+        ]);
+
+        $users = User::where('name', 'LIKE', '%'.$request->input('name').'%')->orderBy('id', 'DESC')->paginate(20);
 
         return response()->json(['users' => $users]);
     }
@@ -29,24 +33,7 @@ class UserController extends Controller
         $user = User::findOrFail($user_id);
         $user->delete();
 
-        return;
+        return response()->json(['code' => 204]);
     }
 
-    public function avatar(Request $request)
-    {
-        $this->validate($request, [
-            'pic'   =>  'required|image'
-        ]);
-
-        $file = $request->file('pic');
-        if ($file->isValid()) {
-            $path = ImageHelper::saveImage($file);
-        }
-        $user = Auth::user();
-        $user->update([
-            'avatar_path'   =>  !empty($path) ? $path : 1
-        ]);
-
-        return response()->json(['user' => $user]);
-    }
 }

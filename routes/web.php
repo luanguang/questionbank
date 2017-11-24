@@ -63,7 +63,8 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => 'jwt.
 Route::group(['namespace' => 'Web', 'middleware' => 'jwt.auth'], function () {
     Route::group(['prefix' => 'user'], function () {
         Route::get('/{user_id}', 'UserController@show');
-        Route::put('/{user_id}', 'UserController@update');
+        Route::post('/{user_id}', 'UserController@update');
+        Route::put('/{user_id}', 'UserController@signIn');
     });
 
     Route::group(['prefix' => 'paper'], function () {

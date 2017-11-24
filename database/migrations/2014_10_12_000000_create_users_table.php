@@ -27,6 +27,7 @@ class CreateUsersTable extends Migration
             $table->integer('integral')->default(0);
             $table->rememberToken();
             $table->timestamps();
+            $table->date('sign_in_time')->nullable();
             $table->softDeletes();
         });
     }

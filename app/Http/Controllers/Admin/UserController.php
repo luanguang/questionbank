@@ -16,7 +16,7 @@ class UserController extends Controller
             'name'      =>  'string'
         ]);
 
-        $users = User::where('name', 'LIKE', '%'.$request->input('name').'%')->orderBy('id', 'DESC')->paginate(20);
+        $users = User::withTrashed()->where('name', 'LIKE', '%'.$request->input('name').'%')->orderBy('id', 'DESC')->paginate(20);
 
         return response()->json(['users' => $users]);
     }
@@ -28,12 +28,36 @@ class UserController extends Controller
         return response()->json(['user' => $user]);
     }
 
+    public function update(Request $request, $user_id)
+    {
+        $this->validate($request, [
+            'is_admin'      =>  'boolean',
+            'profession'    =>  'string|in:teacher,student'
+        ]);
+
+        $user = User::findOrFail($user_id);
+        $user->update([
+            'is_admin'      =>  !empty($request->input('is_admin')) ? $request->input('is_admin') : '0',
+            'profession'    =>  $request->input('profession')
+        ]);
+
+        return response()->json(['user' => $user]);
+    }
+
     public function destroy($user_id)
     {
         $user = User::findOrFail($user_id);
         $user->delete();
 
         return response()->json(['code' => 204]);
+    }
+
+    public function restore($user_id)
+    {
+        $user = User::withTrashed()->findOrFail($user_id);
+        $user->restore();
+
+        return response()->json(['user' => $user]);
     }
 
 }

@@ -26,7 +26,8 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => 'jwt.
         Route::get('/', 'UserController@index');
         Route::get('/{user_id}', 'UserController@show');
         Route::delete('/{user_id}', 'UserController@destroy');
-        Route::post('/{user_id}', 'UserController@avatar');
+        Route::post('/{user_id}', 'UserController@restore');
+        Route::put('/{user_id}', 'UserController@update');
     });
 
     Route::group(['prefix' => 'paper'], function () {

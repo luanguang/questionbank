@@ -27,7 +27,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'name', 'profession', 'password', 'avatar_path', 'phone', 'qq', 'wechat', 'address', 'student_id', 'sign_in_time'
+        'name', 'profession', 'password', 'avatar_path', 'phone', 'qq', 'wechat', 'address', 'sign_in_time', 'is_admin'
     ];
 
     /**
@@ -47,6 +47,11 @@ class User extends Authenticatable implements JWTSubject
     public function histories()
     {
         return $this->hasMany('App\Models\History', 'user_id');
+    }
+
+    public function medals()
+    {
+        return $this->hasMany('App\Models\Medal', 'user_id');
     }
 
 }

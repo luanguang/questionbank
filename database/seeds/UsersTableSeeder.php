@@ -13,6 +13,7 @@ class UsersTableSeeder extends Seeder
     {
         DB::table('users')->insert([
             'name'          =>  'test1',
+            'is_admin'      =>  1,
             'profession'    =>  'teacher',
             'password'      =>  bcrypt('123456789'),
             'created_at'    =>  \Carbon\Carbon::now()->addHours(8)

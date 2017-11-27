@@ -107,13 +107,27 @@ class QuestionController extends Controller
         $question = Question::create([
             'title'         =>  $request->input('title'),
             'is_pic'        =>  $request->input('is_pic'),
+            'score'         =>  $request->input('score'),
             'difficult'     =>  $request->input('difficult'),
             'category_id'   =>  $request->input('category_id'),
             'user_id'       =>  Auth::user()->id
         ]);
-
+        
         $choice = $request->input('choice');
         $right  = $request->input('is_right');
+        $choices = [];
+        for ($i=0; $i<count($choice); $i++) {
+            $choices[$i]['content']  = $choice[$i];
+            $choices[$i]['question_id'] = $question->id;
+            if ($right[0] == $i) {
+                $choices[$i]['is_right'] = 1;
+            } else {
+                $choices[$i]['is_right'] = 0;
+            }
+            $choices[$i]['created_at'] = Carbon::now();
+        }
+        $choices = Choice::insert($choices);
+        return response()->json(['choices' => $choices, 'question' => $question]);
 
     }
 

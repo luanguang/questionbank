@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exceptions\RenderException;
 use App\Http\Requests\AnswerRequest;
 use App\Models\Choice;
+use App\Models\Paper;
 use App\Models\Question;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Intervention\Image\Exception\NotReadableException;
 
 class QuestionController extends Controller
 {
@@ -40,13 +43,14 @@ class QuestionController extends Controller
 
     public function store(AnswerRequest $request, $paper_id)
     {
+        $paper = Paper::findOrFail($paper_id);
         $question = Question::create([
             'title'         =>  $request->input('title'),
             'is_pic'        =>  $request->input('is_pic'),
             'category_id'   =>  $request->input('category_id'),
             'score'         =>  $request->input('score'),
             'user_id'       =>  Auth::user()->id,
-            'paper_id'      =>  $paper_id
+            'paper_id'      =>  $paper->id
         ]);
 
         $choice  =   $request->input('choice');
@@ -63,8 +67,12 @@ class QuestionController extends Controller
             $choices[$i]['created_at']      = Carbon::now();
         }
         $choices = Choice::insert($choices);
-
-        return response()->json(['choices' => $choices, 'question' => $question]);
+        if ($choices) {
+            return response()->json(['choices' => $choices, 'question' => $question]);
+        } else {
+            $question->delete();
+            throw new RenderException();
+        }
     }
 
     public function update(Request $request, $question_id)
@@ -112,7 +120,7 @@ class QuestionController extends Controller
             'category_id'   =>  $request->input('category_id'),
             'user_id'       =>  Auth::user()->id
         ]);
-        
+
         $choice = $request->input('choice');
         $right  = $request->input('is_right');
         $choices = [];
@@ -127,7 +135,12 @@ class QuestionController extends Controller
             $choices[$i]['created_at'] = Carbon::now();
         }
         $choices = Choice::insert($choices);
-        return response()->json(['choices' => $choices, 'question' => $question]);
+        if ($choices) {
+            return response()->json(['choices' => $choices, 'question' => $question]);
+        } else {
+            $question->delete();
+            throw new NotReadableException();
+        }
 
     }
 
@@ -137,6 +150,6 @@ class QuestionController extends Controller
         $question->delete();
         Choice::where('question_id', $question_id)->delete();
 
-        return response()->json(['success' => "删除成功", 'code' => 204]);
+        return response()->json(['code' => 204]);
     }
 }

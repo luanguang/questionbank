@@ -29,6 +29,7 @@ class AnswerRequest extends FormRequest
             'score'         =>  'integer|min:0|max:10',
             'difficult'     =>  'required|in:1,2,3,4,5',
             'category_id'   =>  'required|integer|min:0',
+            'paper_id'      =>  'integer|min:0',
             'choice.*'      =>  'required|string',
             'is_right'      =>  'required|integer'
         ];

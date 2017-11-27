@@ -13,6 +13,6 @@ class RenderException extends Exception
 
     public function render($request)
     {
-            return response()->json(['mag' => '测试异常', 'code' => 403], 403);
+        return response()->json(['mag' => '测试异常', 'code' => 403], 403);
     }
 }

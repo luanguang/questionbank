@@ -2,13 +2,21 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\Models\History;
 use App\Models\Question;
 use App\Models\Choice;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class QuestionController extends Controller
 {
+    public function __construct()
+    {
+
+    }
+
     public function index(Request $request)
     {
         $this->validate($request, [
@@ -44,6 +52,7 @@ class QuestionController extends Controller
         $right_answer   = $all_answers->where('is_right', 1)->random(1);
         $num            = count($right_answer);
         $mistake_answer = $all_answers->where('is_right', 0)->random($question->choice_num - $num);
+
         foreach ($right_answer as $value) {
             $answers[] = $value->only(['id', 'question_id', 'choice']);
         }
@@ -51,9 +60,31 @@ class QuestionController extends Controller
             $answers[] = $val->only(['id', 'question_id', 'choice']);
         }
         shuffle($answers);
-        return $answers;
 
-        return $question->tojson();
+        return response()->json(['question' => $question, 'answers' => $answers]);
+    }
+
+    public function answer(Request $request, $question_id)
+    {
+        $this->validate($request, [
+            'choice.*'    =>  'required|integer|min:0'
+        ]);
+
+        $question       = Question::with('answers')->findOrFail($question_id);
+        $right_answer   = $question->answers->where('is_right', 1)->pluck('id')->toArray();
+        $choices        = $request->input('choice');
+        $result =   array_diff($choices, $right_answer);
+        History::create([
+            'user_id'       =>  Auth::user()->id,
+            'question_id'   =>  $question->id,
+            'category_id'   =>  $question->category_id,
+            'created_at'    =>  Carbon::now()
+        ]);
+        if (!empty($result)) {
+            return response()->json(['result' => '错误']);
+        } else {
+            return response()->json(['result' => '正确']);
+        }
     }
 
 }

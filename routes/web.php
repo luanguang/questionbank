@@ -81,18 +81,20 @@ Route::group(['namespace' => 'Web', 'middleware' => 'jwt.auth'], function () {
         Route::put('/{question_id}', 'QuestionController@update');
         Route::post('/', 'QuestionController@store');
         Route::delete('/{question_id}', 'QuestionController@destroy');
+        Route::post('/{question_id}', 'QuestionController@answer');
 
         //Answer
-        Route::get('/{question_id}/show', 'AnswerController@show');
-        Route::put('/{question_id}/edit', 'AnswerController@update');
-        Route::post('/create', 'AnswerController@store');
-        Route::delete('/{question_id}', 'AnswerController@destroy');
-        Route::post('/{question_id}/show', 'AnswerController@reply');
+        Route::get('/{question_id}/show', 'ChoiceController@show');
+        Route::put('/{question_id}/edit', 'ChoiceController@update');
+        Route::post('/create', 'ChoiceController@store');
+        Route::delete('/{question_id}', 'ChoiceController@destroy');
+        Route::post('/{question_id}/show', 'ChoiceController@reply');
     });
 
     Route::group(['prefix' => 'category'], function () {
         Route::get('/', 'CategoryController@index');
     });
+    Route::get('/', 'HomeController@index');
 
     Route::get('history', 'HistoryController@index');
 });

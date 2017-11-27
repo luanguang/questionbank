@@ -11,23 +11,10 @@ class HistoryController extends Controller
     public function index(Request $request)
     {
         $this->validate($request, [
-            'category_id'  =>   'integer|min:0',
-            'content'      =>   'string'
+            'category_id'   => 'required|integer|min:0'
         ]);
+        $history = History::with('user', 'question', 'category')->where(['user_id' => Auth::user()->id, 'category_id' => $request->input('category_id')])->orderBy('id', 'DESC')->paginate(20);
 
-        $histories = History::where('user_id', Auth::user()->id);
-        $search = array_filter($request->only('category_id', 'content', 'question_id'), function ($var) {
-            return !empty($var);
-        });
-        foreach ($search as $key => $value) {
-            if (in_array($key, ['category_id', 'question_id'])) {
-                $histories = $histories->where($key, $value);
-            } elseif (in_array($key, ['content'])) {
-                $histories = $histories->where($key, 'LIKE', '%'.$value.'%');
-            }
-        }
-        $histories = $histories->orderBy('id', 'DESC')->paginate(20);
-
-        return $histories->tojson();
+        return response()->json(['history' => $history]);
     }
 }

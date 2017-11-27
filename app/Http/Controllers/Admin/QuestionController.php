@@ -16,20 +16,18 @@ class QuestionController extends Controller
     {
         $this->validate($request, [
             'title'         =>  'string',
-            'category_id'   =>  'integer|min:0',
             'is_pic'        =>  'boolean',
-            'is_plural'     =>  'boolean',
-            'choice_num'    =>  'integer|min:0',
-            'user_id'       =>  'integer|min:0'
+            'difficult'     =>  'integer|in:1,2,3,4,5',
+            'category_id'   =>  'integer|min:0',
         ]);
 
         $question = new Question;
-        $search   = array_filter($request->only('title', 'category_id', 'is_pic', 'user_id'), function ($var) {
+        $search   = array_filter($request->only('title', 'is_pic', 'difficult', 'category_id'), function ($var) {
             return !empty($var);
         });
 
         foreach ($search as $key => $value) {
-            if (in_array($key, ['category_id', 'is_pic', 'user_id'])) {
+            if (in_array($key, ['category_id', 'is_pic', 'difficult'])) {
                 $question = $question->where($key, $value);
             } elseif (in_array($key, ['title'])) {
                 $question = $question->where($key, 'LIKE', '%'.$value.'%');
@@ -55,7 +53,7 @@ class QuestionController extends Controller
         $right   =   $request->input('is_right');
         $choices = [];
         for ($i = 0; $i<count($choice); $i++) {
-            $choices[$i]['choice']          = $choice[$i];
+            $choices[$i]['content']         = $choice[$i];
             $choices[$i]['question_id']     = $question->id;
             if ($i == $right[0]) {
                 $choices[$i]['is_right']    = 1;
@@ -102,6 +100,21 @@ class QuestionController extends Controller
         }
 
         return response()->json(['question' => $question]);
+    }
+
+    public function create(AnswerRequest $request)
+    {
+        $question = Question::create([
+            'title'         =>  $request->input('title'),
+            'is_pic'        =>  $request->input('is_pic'),
+            'difficult'     =>  $request->input('difficult'),
+            'category_id'   =>  $request->input('category_id'),
+            'user_id'       =>  Auth::user()->id
+        ]);
+
+        $choice = $request->input('choice');
+        $right  = $request->input('is_right');
+
     }
 
     public function destroy($question_id)

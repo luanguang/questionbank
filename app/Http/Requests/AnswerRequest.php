@@ -24,11 +24,13 @@ class AnswerRequest extends FormRequest
     public function rules()
     {
         return [
-            'title'                     =>  'required|string',
-            'is_pic'                    =>  'boolean',
-            'category_id'               =>  'required|integer|min:0',
-            'score'                     =>  'required|integer|min:0|max:10',
-            'choice.*'                  =>  'required|string'
+            'title'         =>  'required|string',
+            'is_pic'        =>  'boolean',
+            'score'         =>  'integer|min:0|max:10',
+            'difficult'     =>  'required|in:1,2,3,4,5',
+            'category_id'   =>  'required|integer|min:0',
+            'choice.*'      =>  'required|string',
+            'is_right'      =>  'required|integer'
         ];
     }
 }

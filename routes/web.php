@@ -52,6 +52,7 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => 'jwt.
         Route::get('/', 'QuestionController@index');
         Route::get('/{question_id}/show', 'QuestionController@show');
         Route::put('/{question_id}', 'QuestionController@update');
+        Route::post('/create', 'QuestionController@create');
         Route::delete('/{question_id}', 'QuestionController@destroy');
 
         //Answer
@@ -75,10 +76,10 @@ Route::group(['namespace' => 'Web', 'middleware' => 'jwt.auth'], function () {
     });
 
     Route::group(['prefix' => 'question'], function () {
-        Route::get('/index', 'QuestionController@index');
-        Route::get('/{question_id}/show', 'QuestionController@show');
-        Route::put('/{question_id}/edit', 'QuestionController@update');
-        Route::post('/create', 'QuestionController@store');
+        Route::get('/', 'QuestionController@index');
+        Route::get('/{question_id}', 'QuestionController@show');
+        Route::put('/{question_id}', 'QuestionController@update');
+        Route::post('/', 'QuestionController@store');
         Route::delete('/{question_id}', 'QuestionController@destroy');
 
         //Answer

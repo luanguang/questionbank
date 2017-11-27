@@ -15,15 +15,15 @@ class CreateQuestionsTable extends Migration
     {
         Schema::create('questions', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('title');
+            $table->string('title')->index();
             $table->boolean('is_pic')->nullable();
-            $table->integer('score');
+            $table->integer('score')->nullable();
             $table->enum('difficult', ['1', '2', '3', '4', '5']);
             $table->integer('great_question')->default(0);
             $table->integer('test_num')->default(0);
-            $table->integer('category_id');
+            $table->integer('category_id')->index();
             $table->integer('user_id');
-            $table->integer('paper_id');
+            $table->integer('paper_id')->nullable();
             $table->timestamps();
         });
     }

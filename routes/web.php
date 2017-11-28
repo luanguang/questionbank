@@ -82,6 +82,8 @@ Route::group(['namespace' => 'Web', 'middleware' => 'jwt.auth'], function () {
         Route::post('/', 'QuestionController@store');
         Route::delete('/{question_id}', 'QuestionController@destroy');
         Route::post('/{question_id}', 'QuestionController@answer');
+        Route::post('/test', 'QuestionController@getTest');
+        Route::put('/result', 'QuestionController@getResult');
 
         //Answer
         Route::get('/{question_id}/show', 'ChoiceController@show');
